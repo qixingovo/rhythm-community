@@ -95,7 +95,7 @@ export function B50Chart({ scores }: B50ChartProps) {
 
   return (
     <div className="space-y-3">
-      <canvas ref={canvasRef} className="w-full rounded-lg" ref={el => { if (el) setTimeout(draw, 100) }} />
+      <canvas ref={el => { (canvasRef as any).current = el; if (el) setTimeout(draw, 100); }} />
       <div className="flex items-center justify-between">
         <span className="text-xs text-muted-foreground">{top50.length} 首 · 色块 = 达成率</span>
         <button onClick={download} className="text-xs bg-primary text-primary-foreground px-3 py-1 rounded hover:opacity-90">

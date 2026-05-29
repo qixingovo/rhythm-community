@@ -8,7 +8,7 @@ async function checkAdmin(request: NextRequest) {
   const payload = verifyAccessToken(token)
   if (!payload) return null
   const user = await prisma.user.findUnique({ where: { id: payload.userId }, include: { trustRole: true } })
-  return user?.trustRole?.level >= 3 ? user : null
+  return (user?.trustRole?.level ?? 0) >= 3 ? user : null
 }
 
 export async function GET(request: NextRequest) {

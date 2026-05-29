@@ -12,7 +12,7 @@ export async function PUT(
   if (!payload) return NextResponse.json({ error: "登录已过期" }, { status: 401 })
 
   const admin = await prisma.user.findUnique({ where: { id: payload.userId }, include: { trustRole: true } })
-  if (!admin?.trustRole || admin.trustRole.level < 3) return NextResponse.json({ error: "无权限" }, { status: 403 })
+  if (!admin?.trustRole || (admin.trustRole?.level ?? 0) < 3) return NextResponse.json({ error: "无权限" }, { status: 403 })
 
   const { id } = await params
   const { level } = await request.json()
