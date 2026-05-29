@@ -4,8 +4,8 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Rhythm Community | 音游社区',
-    template: '%s | Rhythm Community',
+    default: '踏乐行 | 音游社区',
+    template: '%s | 踏乐行',
   },
   description: '专业的音游社区平台，提供AI陪练、成绩管理、社区交流等功能',
   keywords: [

@@ -1,11 +1,11 @@
-import { cookies } from "next/headers"
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/db/prisma"
 import { verifyAccessToken } from "@/lib/auth/jwt"
 
-async function getUserId(): Promise<string | null> {
-  const cookieStore = await cookies()
-  const token = cookieStore.get("accessToken")?.value
+function getUserId(request: NextRequest): string | null {
+  const cookieHeader = request.headers.get("cookie") || ""
+  const match = cookieHeader.match(/(?:^|;\s*)accessToken=([^;]+)/)
+  const token = match?.[1]
   if (!token) return null
   const payload = verifyAccessToken(token)
   return payload?.userId ?? null
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
         skip: offset,
         include: {
           author: { select: { id: true, username: true, avatar: true } },
-          _count: { select: { comments: true } },
+          _count: { select: { comments: true, likes: true } },
         },
       }),
       prisma.post.count({ where }),
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const userId = await getUserId()
+  const userId = getUserId(request)
   if (!userId) {
     return NextResponse.json({ error: "未登录" }, { status: 401 })
   }

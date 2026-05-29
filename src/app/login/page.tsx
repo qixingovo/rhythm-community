@@ -50,7 +50,7 @@ export default function Login() {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
             <Music className="text-primary w-10 h-10" />
-            <h1 className="text-3xl font-bold text-primary">Rhythm Community</h1>
+            <h1 className="text-3xl font-bold text-primary">踏乐行</h1>
           </div>
           <p className="text-muted-foreground">欢迎回来！登录以继续</p>
         </div>
@@ -135,12 +135,36 @@ export default function Login() {
             </div>
           </div>
 
-          <p className="mt-8 text-center text-sm text-muted-foreground">
+          <p className="mt-4 text-center text-sm text-muted-foreground">
             还没有账号？
             <Link href="/register" className="text-primary hover:underline ml-1">
               注册账号
             </Link>
           </p>
+
+          <div className="mt-3 text-center">
+            <button
+              onClick={async () => {
+                setLoading(true)
+                try {
+                  const res = await fetch("/api/auth/guest")
+                  if (res.ok) {
+                    router.push("/")
+                  } else {
+                    setError("游客模式暂时不可用")
+                  }
+                } catch {
+                  setError("网络错误")
+                } finally {
+                  setLoading(false)
+                }
+              }}
+              disabled={loading}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              跳过登录，先看看
+            </button>
+          </div>
         </div>
       </div>
     </div>

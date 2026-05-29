@@ -62,7 +62,7 @@ export default function RegisterPage() {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
             <Music className="text-primary w-10 h-10" />
-            <h1 className="text-3xl font-bold text-primary">Rhythm Community</h1>
+            <h1 className="text-3xl font-bold text-primary">踏乐行</h1>
           </div>
           <p className="text-muted-foreground">创建账号，开启音游之旅</p>
         </div>

@@ -30,7 +30,7 @@ export function Header() {
       <div className="flex items-center gap-3">
         <Music className="text-primary w-6 h-6" />
         <Link href="/" className="font-bold text-xl text-primary">
-          Rhythm Community
+          踏乐行
         </Link>
       </div>
       <div className="flex items-center gap-4">

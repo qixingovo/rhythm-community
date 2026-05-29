@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react"
 import { MainLayout } from "@/components/MainLayout"
 import { ScoreWall } from "@/components/profile/ScoreWall"
-import { Trophy } from "lucide-react"
+import { B50Chart } from "@/components/profile/B50Chart"
+import { Trophy, Edit, X } from "lucide-react"
 import Link from "next/link"
 
 interface UserData {
@@ -31,6 +32,8 @@ export default function Profile() {
   const [scores, setScores] = useState<Score[]>([])
   const [scoreTotal, setScoreTotal] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [editing, setEditing] = useState(false)
+  const [editBio, setEditBio] = useState("")
   const [activeTab, setActiveTab] = useState<"scores" | "posts">("scores")
 
   useEffect(() => {
@@ -95,12 +98,21 @@ export default function Profile() {
                   </p>
                 </div>
               </div>
-              <Link
-                href="/profile-scores"
-                className="bg-primary text-primary-foreground px-4 py-2 rounded-lg font-medium text-sm hover:opacity-90 transition-opacity"
-              >
-                管理成绩
-              </Link>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => { setEditing(true); setEditBio(user.bio || "") }}
+                  className="flex items-center gap-1 px-3 py-2 rounded-lg border border-border text-sm hover:bg-muted transition-colors"
+                >
+                  <Edit className="w-4 h-4" />
+                  编辑资料
+                </button>
+                <Link
+                  href="/profile-scores"
+                  className="bg-primary text-primary-foreground px-4 py-2 rounded-lg font-medium text-sm hover:opacity-90 transition-opacity"
+                >
+                  管理成绩
+                </Link>
+              </div>
             </div>
 
             <div className="flex gap-8">
@@ -133,11 +145,45 @@ export default function Profile() {
             {scores.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">暂无成绩</div>
             ) : (
-              <ScoreWall scores={scores} />
+              <>
+                <ScoreWall scores={scores} />
+                <div className="mt-6">
+                  <h3 className="text-sm font-semibold text-foreground mb-3">b50 图表</h3>
+                  <div className="bg-card rounded-xl border border-border p-4">
+                    <B50Chart scores={scores} />
+                  </div>
+                </div>
+              </>
             )}
           </div>
         )}
       </div>
+
+      {editing && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setEditing(false)}>
+          <div className="bg-card rounded-2xl p-6 w-full max-w-md border border-border shadow-xl" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold">编辑资料</h2>
+              <button onClick={() => setEditing(false)}><X className="w-5 h-5 text-muted-foreground" /></button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">个人简介</label>
+                <textarea value={editBio} onChange={e => setEditBio(e.target.value)} rows={3} className="w-full bg-muted border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="介绍一下自己..." />
+              </div>
+              <button
+                onClick={async () => {
+                  const res = await fetch("/api/users/me", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ bio: editBio }) })
+                  if (res.ok) { window.location.reload() }
+                }}
+                className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-medium hover:opacity-90"
+              >
+                保存
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </MainLayout>
   )
 }

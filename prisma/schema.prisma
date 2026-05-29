@@ -32,6 +32,7 @@ model User {
   trainingPlans TrainingPlan[]
   b50Snapshots  B50Snapshot[]
   collabMembers CollabMember[]
+  likes        Like[]
   notifications Notification[]
 }
 
@@ -140,8 +141,9 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  author   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  author User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   comments Comment[]
+  likes    Like[]
 
   @@index([category, createdAt])
 }
@@ -158,6 +160,18 @@ model Comment {
   author  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   parent  Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
   replies Comment[] @relation("CommentReplies")
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
 }
 
 model Follow {
@@ -267,6 +281,11 @@ model GameSong {
 
   @@unique([game, title, level])
   @@index([game, genre])
+}
+
+model SiteConfig {
+  key   String @id
+  value String
 }
 
 model LeaderboardEntry {
