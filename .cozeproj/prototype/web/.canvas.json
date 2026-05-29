@@ -1,0 +1,100 @@
+{
+  "elements": [
+    {
+      "type": "html",
+      "options": {
+        "path": ".cozeproj/prototype/web/home.html"
+      },
+      "title": "首页",
+      "size": "web"
+    },
+    {
+      "type": "html",
+      "options": {
+        "path": ".cozeproj/prototype/web/login.html"
+      },
+      "title": "登录",
+      "size": "web"
+    },
+    {
+      "type": "html",
+      "options": {
+        "path": ".cozeproj/prototype/web/register.html"
+      },
+      "title": "注册",
+      "size": "web"
+    },
+    {
+      "type": "html",
+      "options": {
+        "path": ".cozeproj/prototype/web/community.html"
+      },
+      "title": "社区广场",
+      "size": "web"
+    },
+    {
+      "type": "html",
+      "options": {
+        "path": ".cozeproj/prototype/web/community-rhythm.html"
+      },
+      "title": "音游区",
+      "size": "web"
+    },
+    {
+      "type": "html",
+      "options": {
+        "path": ".cozeproj/prototype/web/community-charts.html"
+      },
+      "title": "谱面讨论",
+      "size": "web"
+    },
+    {
+      "type": "html",
+      "options": {
+        "path": ".cozeproj/prototype/web/community-art.html"
+      },
+      "title": "联动创作",
+      "size": "web"
+    },
+    {
+      "type": "html",
+      "options": {
+        "path": ".cozeproj/prototype/web/community-events.html"
+      },
+      "title": "活动比赛",
+      "size": "web"
+    },
+    {
+      "type": "html",
+      "options": {
+        "path": ".cozeproj/prototype/web/profile.html"
+      },
+      "title": "个人主页",
+      "size": "web"
+    },
+    {
+      "type": "html",
+      "options": {
+        "path": ".cozeproj/prototype/web/profile-scores.html"
+      },
+      "title": "成绩管理",
+      "size": "web"
+    },
+    {
+      "type": "html",
+      "options": {
+        "path": ".cozeproj/prototype/web/leaderboard.html"
+      },
+      "title": "排行榜",
+      "size": "web"
+    },
+    {
+      "type": "html",
+      "options": {
+        "path": ".cozeproj/prototype/web/messages.html"
+      },
+      "title": "私信",
+      "size": "web"
+    }
+  ]
+}

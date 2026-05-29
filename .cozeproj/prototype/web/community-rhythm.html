@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- 字体（按需，系统字体时省略；只能用 Google 字体，CSS 地址前缀：https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google） -->
+  <!-- <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/google-all-fonts.css" rel="stylesheet"/> -->
+
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/tailwindcss/tailwindcss-browser-4.2.4.min.js"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      /* === 品牌色 - 赛博音游风 === */
+      --color-primary:              #00f0ff;
+      --color-primary-container:    #00f0ff20;
+      --color-on-primary:           #0a0a0f;
+      /* === 背景 / 表面 === */
+      --color-background:                 #0a0a0f;
+      --color-surface-container-lowest:   #0d0d14;
+      --color-surface:                    #12121a;
+      --color-surface-container:          #1a1a2e;
+      --color-surface-container-high:     #22223a;
+      --color-surface-container-highest:  #2a2a4a;
+      /* === 文字 === */
+      --color-on-surface:           #e0e0e0;
+      --color-on-surface-variant:   #a0a0b0;
+      /* === 功能色 === */
+      --color-success:  #00ff88;
+      --color-error:    #ff4444;
+      --color-warning:  #ffcc00;
+      /* === 边框 === */
+      --color-outline:          #1e1e30;
+      --color-outline-variant:  #2a2a4a;
+      /* === 圆角 === */
+      --radius-sm:   0.375rem;
+      --radius-md:   0.5rem;
+      --radius-lg:   0.75rem;
+      --radius-xl:   1rem;
+      --radius-2xl:  1.5rem;
+      --radius-full: 9999px;
+      /* === 阴影 - 霓虹发光 === */
+      --shadow-card:   0 2px 8px rgba(0,240,255,0.1);
+      --shadow-float:  0 10px 25px rgba(0,240,255,0.15);
+      --shadow-dialog: 0 25px 50px rgba(0,240,255,0.2);
+      /* === 字体 === */
+      --font-sans: system-ui, -apple-system, sans-serif;
+    }
+  </style>
+
+  <!-- 图片兜底 -->
+  <script>
+    document.addEventListener('error', function (e) {
+      const img = e.target;
+      if (img.tagName !== 'IMG' || img.dataset.fallback) return;
+      img.dataset.fallback = '1';
+      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const cat = img.getAttribute('data-category') || '其他';
+      const alt = img.getAttribute('alt') || '';
+      const label = esc(alt.length > 8 ? alt.slice(0, 8) + '…' : alt);
+      const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
+      const icon = icons[cat] || '🖼';
+      const w = img.width || 400, h = img.height || 300;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%23f3f4f6"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%239ca3af" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      img.src = 'data:image/svg+xml,' + svg;
+    }, true);
+  </script>
+</head>
+
+<body class="bg-background text-on-surface font-sans min-h-screen">
+
+  <!-- @nav:start 导航组件，不需要的页面则不要复制此段（从 @nav:start 到 @nav:end） -->
+  <!-- 顶部导航 -->
+  <header class="bg-surface sticky top-0 z-40 h-16 flex items-center justify-between px-6 border-b border-outline/20">
+    <div class="flex items-center gap-3">
+      <i data-lucide="music" class="text-primary w-6 h-6"></i>
+      <span class="font-bold text-xl text-primary">Rhythm Community</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <button class="p-2 rounded-md hover:bg-surface-container transition-colors">
+        <i data-lucide="bell" class="w-5 h-5 text-on-surface-variant"></i>
+      </button>
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold">
+          初
+        </div>
+        <span class="text-sm font-medium">小初</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex" style="height: calc(100vh - 4rem)">
+    <!-- 左侧侧边栏 -->
+    <aside class="w-64 shrink-0 bg-surface overflow-y-auto border-r border-outline/20">
+      <nav class="p-4 space-y-1">
+        <a href="home.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="home" class="w-4 h-4"></i>
+          首页
+        </a>
+        <div class="pt-4 pb-2 px-3">
+          <span class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">社区</span>
+        </div>
+        <a href="community.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="message-square" class="w-4 h-4"></i>
+          社区广场
+        </a>
+        <a href="community-rhythm.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md bg-primary/10 text-primary font-medium text-sm transition-colors" aria-current="page">
+          <i data-lucide="gamepad" class="w-4 h-4"></i>
+          音游区
+        </a>
+        <a href="community-charts.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="disc" class="w-4 h-4"></i>
+          谱面讨论
+        </a>
+        <a href="community-art.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="palette" class="w-4 h-4"></i>
+          联动创作
+        </a>
+        <a href="community-events.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="calendar" class="w-4 h-4"></i>
+          活动比赛
+        </a>
+        <div class="pt-4 pb-2 px-3">
+          <span class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">个人</span>
+        </div>
+        <a href="profile.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="user" class="w-4 h-4"></i>
+          个人主页
+        </a>
+        <a href="profile-scores.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="trophy" class="w-4 h-4"></i>
+          成绩管理
+        </a>
+        <a href="leaderboard.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="bar-chart" class="w-4 h-4"></i>
+          排行榜
+        </a>
+        <a href="messages.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="mail" class="w-4 h-4"></i>
+          私信
+        </a>
+      </nav>
+    </aside>
+
+    <!-- 主内容区 -->
+    <!-- @main-content:start -->
+    <main class="flex-1 min-w-0 overflow-y-auto bg-background p-6">
+      <!-- 页面标题 -->
+      <div class="mb-6">
+        <h1 class="text-2xl font-bold text-on-surface">音游区</h1>
+        <p class="text-sm text-on-surface-variant mt-1">按游戏分板块，探讨音游技巧、分享心得</p>
+      </div>
+
+      <!-- 游戏板块导航 -->
+      <div class="mb-6">
+        <div class="flex items-center gap-2 overflow-x-auto pb-2">
+          <button id="tab-arc" class="flex items-center gap-2 px-4 py-2 rounded-md bg-primary/10 text-primary font-medium text-sm whitespace-nowrap">
+            <i data-lucide="zap" class="w-4 h-4"></i>
+            Arcaea
+          </button>
+          <button id="tab-phi" class="flex items-center gap-2 px-4 py-2 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm whitespace-nowrap transition-colors">
+            <i data-lucide="circle" class="w-4 h-4"></i>
+            Phigros
+          </button>
+          <button id="tab-maimai" class="flex items-center gap-2 px-4 py-2 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm whitespace-nowrap transition-colors">
+            <i data-lucide="circle-dot" class="w-4 h-4"></i>
+            舞萌
+          </button>
+          <button id="tab-chunithm" class="flex items-center gap-2 px-4 py-2 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm whitespace-nowrap transition-colors">
+            <i data-lucide="waveform" class="w-4 h-4"></i>
+            CHUNITHM
+          </button>
+          <button id="tab-osu" class="flex items-center gap-2 px-4 py-2 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm whitespace-nowrap transition-colors">
+            <i data-lucide="mouse-pointer" class="w-4 h-4"></i>
+            osu!
+          </button>
+        </div>
+      </div>
+
+      <!-- 讨论列表 -->
+      <div class="space-y-3">
+        <!-- 讨论帖子 1 -->
+        <div class="bg-surface rounded-lg shadow-card p-5 hover:shadow-float transition-shadow">
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold shrink-0">
+              音
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-sm font-medium text-on-surface">音游爱好者</span>
+                <span class="text-xs text-on-surface-variant">2小时前</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-primary/15 text-primary">Arcaea</span>
+              </div>
+              <h3 class="text-base font-semibold text-on-surface mb-2">【攻略】Arcaea 10.5 段位突破心得分享</h3>
+              <p class="text-sm text-on-surface-variant mb-3 line-clamp-2">分享一下从 10.0 到 10.5 的突破心得，主要是手法调整和选曲策略，希望能帮助到同样在瓶颈期的玩家...</p>
+              <div class="flex items-center gap-4 text-xs text-on-surface-variant">
+                <span class="flex items-center gap-1">
+                  <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                  28 回复
+                </span>
+                <span class="flex items-center gap-1">
+                  <i data-lucide="heart" class="w-3.5 h-3.5"></i>
+                  89 点赞
+                </span>
+                <span class="flex items-center gap-1">
+                  <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                  456 浏览
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 讨论帖子 2 -->
+        <div class="bg-surface rounded-lg shadow-card p-5 hover:shadow-float transition-shadow">
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface font-semibold shrink-0">
+              节
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-sm font-medium text-on-surface">节奏大师</span>
+                <span class="text-xs text-on-surface-variant">5小时前</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-warning/15 text-warning">Phigros</span>
+              </div>
+              <h3 class="text-base font-semibold text-on-surface mb-2">【讨论】Phigros 新曲包难度评价</h3>
+              <p class="text-sm text-on-surface-variant mb-3 line-clamp-2">新曲包大家都玩了吗？感觉这次的 IN 难度跨度有点大，有几首歌的配置很有意思，想听听大家的看法...</p>
+              <div class="flex items-center gap-4 text-xs text-on-surface-variant">
+                <span class="flex items-center gap-1">
+                  <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                  45 回复
+                </span>
+                <span class="flex items-center gap-1">
+                  <i data-lucide="heart" class="w-3.5 h-3.5"></i>
+                  123 点赞
+                </span>
+                <span class="flex items-center gap-1">
+                  <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                  678 浏览
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 讨论帖子 3 -->
+        <div class="bg-surface rounded-lg shadow-card p-5 hover:shadow-float transition-shadow">
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-full bg-success/20 flex items-center justify-center text-success font-semibold shrink-0">
+              舞
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-sm font-medium text-on-surface">舞萌达人</span>
+                <span class="text-xs text-on-surface-variant">昨天</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-success/15 text-success">舞萌</span>
+              </div>
+              <h3 class="text-base font-semibold text-on-surface mb-2">【心得】舞萌 DX 红谱入门技巧</h3>
+              <p class="text-sm text-on-surface-variant mb-3 line-clamp-2">作为一个刚从绿谱转红谱的玩家，分享一下这段时间的练习心得，包括读谱速度提升和体力分配...</p>
+              <div class="flex items-center gap-4 text-xs text-on-surface-variant">
+                <span class="flex items-center gap-1">
+                  <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                  67 回复
+                </span>
+                <span class="flex items-center gap-1">
+                  <i data-lucide="heart" class="w-3.5 h-3.5"></i>
+                  234 点赞
+                </span>
+                <span class="flex items-center gap-1">
+                  <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                  890 浏览
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 讨论帖子 4 -->
+        <div class="bg-surface rounded-lg shadow-card p-5 hover:shadow-float transition-shadow">
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-full bg-error/20 flex items-center justify-center text-error font-semibold shrink-0">
+              CH
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-sm font-medium text-on-surface">CHUNITHM 玩家</span>
+                <span class="text-xs text-on-surface-variant">2天前</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-error/15 text-error">CHUNITHM</span>
+              </div>
+              <h3 class="text-base font-semibold text-on-surface mb-2">【求助】关于 CHUNITHM 的上下滑键处理</h3>
+              <p class="text-sm text-on-surface-variant mb-3 line-clamp-2">最近在练 CHUNITHM，遇到上下滑键总是处理不好，有没有什么练习方法或者技巧可以分享一下？</p>
+              <div class="flex items-center gap-4 text-xs text-on-surface-variant">
+                <span class="flex items-center gap-1">
+                  <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                  34 回复
+                </span>
+                <span class="flex items-center gap-1">
+                  <i data-lucide="heart" class="w-3.5 h-3.5"></i>
+                  56 点赞
+                </span>
+                <span class="flex items-center gap-1">
+                  <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                  345 浏览
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 发帖按钮 -->
+      <div class="fixed bottom-6 right-6">
+        <button id="btn-create-post" class="bg-primary text-on-primary p-4 rounded-full shadow-float hover:opacity-90 active:scale-[0.98] transition-all">
+          <i data-lucide="plus" class="w-6 h-6"></i>
+        </button>
+      </div>
+    </main>
+    <!-- @main-content:end -->
+
+    <!-- 右侧 AI Agent 侧边栏 -->
+    <aside class="w-80 shrink-0 bg-surface overflow-y-auto border-l border-outline/20 flex flex-col">
+      <div class="p-4 border-b border-outline/20">
+        <div class="flex items-center gap-2 mb-1">
+          <i data-lucide="bot" class="text-primary w-5 h-5"></i>
+          <span class="font-semibold">AI 陪练</span>
+        </div>
+        <p class="text-xs text-on-surface-variant">你的专属音游进阶教练</p>
+      </div>
+      <div class="flex-1 p-4 space-y-4 overflow-y-auto">
+        <div class="bg-surface-container rounded-lg p-3">
+          <div class="flex items-start gap-2">
+            <i data-lucide="bot" class="text-primary w-4 h-4 mt-0.5 shrink-0"></i>
+            <div class="text-sm">
+              <p class="text-on-surface">你好！我是你的音游陪练。需要分析成绩、推荐谱面，还是制定训练计划？</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-4 border-t border-outline/20">
+        <div class="flex items-center gap-2">
+          <input type="text" placeholder="输入你的问题..." class="flex-1 bg-surface-container border-none rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30">
+          <button class="bg-primary text-on-primary p-2 rounded-md hover:opacity-90 transition-opacity">
+            <i data-lucide="send" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    lucide.createIcons();
+    
+    $(function() {
+      // 游戏板块切换
+      $('#tab-arc, #tab-phi, #tab-maimai, #tab-chunithm, #tab-osu').on('click', function() {
+        // 移除所有激活态
+        $('#tab-arc, #tab-phi, #tab-maimai, #tab-chunithm, #tab-osu')
+          .removeClass('bg-primary/10 text-primary')
+          .addClass('text-on-surface-variant hover:bg-surface-container hover:text-on-surface');
+        
+        // 给当前点击的添加激活态
+        $(this)
+          .addClass('bg-primary/10 text-primary')
+          .removeClass('text-on-surface-variant hover:bg-surface-container hover:text-on-surface');
+        
+        // 切换游戏板块 - 实际项目中这里会加载对应游戏的讨论内容
+        console.log('切换到游戏板块:', $(this).text().trim());
+      });
+
+      // 发帖按钮
+      $('#btn-create-post').on('click', function() {
+        // 点击后应打开发帖模态框，包含：
+        // 1. 标题输入框
+        // 2. 游戏板块选择下拉
+        // 3. 内容编辑区域
+        // 4. 发布和取消按钮
+        console.log('点击发帖按钮');
+      });
+    });
+  </script>
+</body>
+
+</html>

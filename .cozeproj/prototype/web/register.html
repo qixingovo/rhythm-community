@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- 字体（按需，系统字体时省略；只能用 Google 字体，CSS 地址前缀：https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google） -->
+  <!-- <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/google-all-fonts.css" rel="stylesheet"/> -->
+
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/tailwindcss/tailwindcss-browser-4.2.4.min.js"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      /* === 品牌色 - 赛博音游风 === */
+      --color-primary:              #00f0ff;
+      --color-primary-container:    #00f0ff20;
+      --color-on-primary:           #0a0a0f;
+      /* === 背景 / 表面 === */
+      --color-background:                 #0a0a0f;
+      --color-surface-container-lowest:   #0d0d14;
+      --color-surface:                    #12121a;
+      --color-surface-container:          #1a1a2e;
+      --color-surface-container-high:     #22223a;
+      --color-surface-container-highest:  #2a2a4a;
+      /* === 文字 === */
+      --color-on-surface:           #e0e0e0;
+      --color-on-surface-variant:   #a0a0b0;
+      /* === 功能色 === */
+      --color-success:  #00ff88;
+      --color-error:    #ff4444;
+      --color-warning:  #ffcc00;
+      /* === 边框 === */
+      --color-outline:          #1e1e30;
+      --color-outline-variant:  #2a2a4a;
+      /* === 圆角 === */
+      --radius-sm:   0.375rem;
+      --radius-md:   0.5rem;
+      --radius-lg:   0.75rem;
+      --radius-xl:   1rem;
+      --radius-2xl:  1.5rem;
+      --radius-full: 9999px;
+      /* === 阴影 - 霓虹发光 === */
+      --shadow-card:   0 2px 8px rgba(0,240,255,0.1);
+      --shadow-float:  0 10px 25px rgba(0,240,255,0.15);
+      --shadow-dialog: 0 25px 50px rgba(0,240,255,0.2);
+      /* === 字体 === */
+      --font-sans: system-ui, -apple-system, sans-serif;
+    }
+  </style>
+
+  <!-- 图片兜底 -->
+  <script>
+    document.addEventListener('error', function (e) {
+      const img = e.target;
+      if (img.tagName !== 'IMG' || img.dataset.fallback) return;
+      img.dataset.fallback = '1';
+      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const cat = img.getAttribute('data-category') || '其他';
+      const alt = img.getAttribute('alt') || '';
+      const label = esc(alt.length > 8 ? alt.slice(0, 8) + '…' : alt);
+      const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
+      const icon = icons[cat] || '🖼';
+      const w = img.width || 400, h = img.height || 300;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%23f3f4f6"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%239ca3af" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      img.src = 'data:image/svg+xml,' + svg;
+    }, true);
+  </script>
+</head>
+
+<body class="bg-background text-on-surface font-sans min-h-screen">
+
+  <!-- @main-content:start -->
+  <main class="min-h-screen flex items-center justify-center p-6">
+    <div class="w-full max-w-4xl">
+      <!-- 注册卡片 -->
+      <div class="bg-surface rounded-xl shadow-float p-8 border border-outline/20">
+        <div class="text-center mb-8">
+          <div class="flex items-center justify-center gap-3 mb-4">
+            <i data-lucide="music" class="text-primary w-8 h-8"></i>
+            <span class="font-bold text-2xl text-primary">Rhythm Community</span>
+          </div>
+          <h1 class="text-2xl font-bold text-on-surface mb-2">创建你的账号</h1>
+          <p class="text-sm text-on-surface-variant">加入音游社区，开启你的节奏之旅</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+          <!-- 左侧：注册表单 -->
+          <div class="space-y-5">
+            <!-- 用户名输入 -->
+            <div>
+              <label for="input-username" class="block text-sm font-medium text-on-surface mb-1.5">用户名</label>
+              <input type="text" id="input-username" placeholder="输入你在社区的昵称" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
+            </div>
+
+            <!-- 手机号输入 -->
+            <div>
+              <label for="input-phone" class="block text-sm font-medium text-on-surface mb-1.5">手机号</label>
+              <input type="tel" id="input-phone" placeholder="用于账号安全验证" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
+            </div>
+
+            <!-- 邮箱输入 -->
+            <div>
+              <label for="input-email" class="block text-sm font-medium text-on-surface mb-1.5">邮箱</label>
+              <input type="email" id="input-email" placeholder="用于接收通知和找回密码" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
+            </div>
+
+            <!-- 密码输入 -->
+            <div>
+              <label for="input-password" class="block text-sm font-medium text-on-surface mb-1.5">密码</label>
+              <div class="relative">
+                <input type="password" id="input-password" placeholder="至少8位，包含字母和数字" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors pr-10">
+                <button type="button" id="btn-toggle-password" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors">
+                  <i data-lucide="eye" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- 确认密码输入 -->
+            <div>
+              <label for="input-confirm-password" class="block text-sm font-medium text-on-surface mb-1.5">确认密码</label>
+              <input type="password" id="input-confirm-password" placeholder="再次输入密码" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
+            </div>
+
+            <!-- 用户协议 -->
+            <div class="flex items-start gap-2">
+              <input type="checkbox" id="check-agreement" class="mt-0.5 w-4 h-4 text-primary bg-surface-container border-outline-variant rounded focus:ring-primary/30">
+              <label for="check-agreement" class="text-sm text-on-surface-variant">
+                我已阅读并同意 <a href="#" class="text-primary hover:underline">用户协议</a> 和 <a href="#" class="text-primary hover:underline">隐私政策</a>
+              </label>
+            </div>
+
+            <!-- 注册按钮 -->
+            <button id="btn-register" class="w-full bg-primary text-on-primary px-4 py-2.5 rounded-md text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2">
+              <i data-lucide="user-plus" class="w-4 h-4"></i>
+              立即注册
+            </button>
+
+            <!-- 登录链接 -->
+            <p class="text-center text-sm text-on-surface-variant">
+              已有账号？
+              <a href="login.html" id="link-login" class="text-primary font-medium hover:underline">去登录</a>
+            </p>
+          </div>
+
+          <!-- 右侧：装饰和说明 -->
+          <div class="flex flex-col justify-center space-y-6">
+            <!-- 装饰卡片 -->
+            <div class="bg-surface-container rounded-lg p-5 border border-outline-variant/20">
+              <div class="flex items-center gap-3 mb-3">
+                <i data-lucide="zap" class="text-warning w-5 h-5"></i>
+                <h3 class="font-semibold text-on-surface">AI 音游陪练</h3>
+              </div>
+              <p class="text-sm text-on-surface-variant">注册即可体验专属 AI 陪练，分析你的成绩、推荐谱面、制定训练计划</p>
+            </div>
+
+            <div class="bg-surface-container rounded-lg p-5 border border-outline-variant/20">
+              <div class="flex items-center gap-3 mb-3">
+                <i data-lucide="users" class="text-success w-5 h-5"></i>
+                <h3 class="font-semibold text-on-surface">活跃社区</h3>
+              </div>
+              <p class="text-sm text-on-surface-variant">加入音游爱好者社区，交流谱面、分享成绩、参与活动</p>
+            </div>
+
+            <div class="bg-surface-container rounded-lg p-5 border border-outline-variant/20">
+              <div class="flex items-center gap-3 mb-3">
+                <i data-lucide="trophy" class="text-primary w-5 h-5"></i>
+                <h3 class="font-semibold text-on-surface">成长记录</h3>
+              </div>
+              <p class="text-sm text-on-surface-variant">记录你的成绩进步，生成 B50 图表，见证你的触手之路</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <!-- @main-content:end -->
+
+  <script>
+    $(function() {
+      // 密码显示切换
+      $('#btn-toggle-password').on('click', function() {
+        const passwordInput = $('#input-password');
+        const icon = $(this).find('i');
+        
+        if (passwordInput.attr('type') === 'password') {
+          passwordInput.attr('type', 'text');
+          icon.attr('data-lucide', 'eye-off');
+        } else {
+          passwordInput.attr('type', 'password');
+          icon.attr('data-lucide', 'eye');
+        }
+        lucide.createIcons();
+      });
+
+      // 注册按钮 - 点击后应实现注册逻辑：
+      // 1. 验证表单字段（用户名、手机号、邮箱、密码格式）
+      // 2. 检查密码和确认密码是否一致
+      // 3. 检查用户协议是否勾选
+      // 4. 调用注册 API
+      // 5. 注册成功后跳转到首页或登录页
+      $('#btn-register').on('click', function() {
+        console.log('点击注册按钮');
+        // 简单的交互反馈
+        alert('注册功能开发中...');
+      });
+
+      // 登录链接 - 跳转到登录页
+      $('#link-login').on('click', function(e) {
+        e.preventDefault();
+        window.location.href = 'login.html';
+      });
+    });
+
+    lucide.createIcons();
+  </script>
+</body>
+
+</html>

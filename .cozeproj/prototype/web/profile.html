@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- 字体（按需，系统字体时省略；只能用 Google 字体，CSS 地址前缀：https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google） -->
+  <!-- <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/google-all-fonts.css" rel="stylesheet"/> -->
+
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/tailwindcss/tailwindcss-browser-4.2.4.min.js"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      /* === 品牌色 - 赛博音游风 === */
+      --color-primary:              #00f0ff;
+      --color-primary-container:    #00f0ff20;
+      --color-on-primary:           #0a0a0f;
+      /* === 背景 / 表面 === */
+      --color-background:                 #0a0a0f;
+      --color-surface-container-lowest:   #0d0d14;
+      --color-surface:                    #12121a;
+      --color-surface-container:          #1a1a2e;
+      --color-surface-container-high:     #22223a;
+      --color-surface-container-highest:  #2a2a4a;
+      /* === 文字 === */
+      --color-on-surface:           #e0e0e0;
+      --color-on-surface-variant:   #a0a0b0;
+      /* === 功能色 === */
+      --color-success:  #00ff88;
+      --color-error:    #ff4444;
+      --color-warning:  #ffcc00;
+      /* === 边框 === */
+      --color-outline:          #1e1e30;
+      --color-outline-variant:  #2a2a4a;
+      /* === 圆角 === */
+      --radius-sm:   0.375rem;
+      --radius-md:   0.5rem;
+      --radius-lg:   0.75rem;
+      --radius-xl:   1rem;
+      --radius-2xl:  1.5rem;
+      --radius-full: 9999px;
+      /* === 阴影 - 霓虹发光 === */
+      --shadow-card:   0 2px 8px rgba(0,240,255,0.1);
+      --shadow-float:  0 10px 25px rgba(0,240,255,0.15);
+      --shadow-dialog: 0 25px 50px rgba(0,240,255,0.2);
+      /* === 字体 === */
+      --font-sans: system-ui, -apple-system, sans-serif;
+    }
+  </style>
+
+  <!-- 图片兜底 -->
+  <script>
+    document.addEventListener('error', function (e) {
+      const img = e.target;
+      if (img.tagName !== 'IMG' || img.dataset.fallback) return;
+      img.dataset.fallback = '1';
+      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const cat = img.getAttribute('data-category') || '其他';
+      const alt = img.getAttribute('alt') || '';
+      const label = esc(alt.length > 8 ? alt.slice(0, 8) + '…' : alt);
+      const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
+      const icon = icons[cat] || '🖼';
+      const w = img.width || 400, h = img.height || 300;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%23f3f4f6"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%239ca3af" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      img.src = 'data:image/svg+xml,' + svg;
+    }, true);
+  </script>
+</head>
+
+<body class="bg-background text-on-surface font-sans min-h-screen">
+
+  <!-- @nav:start 导航组件，不需要的页面则不要复制此段（从 @nav:start 到 @nav:end） -->
+  <!-- 顶部导航 -->
+  <header class="bg-surface sticky top-0 z-40 h-16 flex items-center justify-between px-6 border-b border-outline/20">
+    <div class="flex items-center gap-3">
+      <i data-lucide="music" class="text-primary w-6 h-6"></i>
+      <span class="font-bold text-xl text-primary">Rhythm Community</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <button class="p-2 rounded-md hover:bg-surface-container transition-colors">
+        <i data-lucide="bell" class="w-5 h-5 text-on-surface-variant"></i>
+      </button>
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold">
+          初
+        </div>
+        <span class="text-sm font-medium">小初</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex" style="height: calc(100vh - 4rem)">
+    <!-- 左侧侧边栏 -->
+    <aside class="w-64 shrink-0 bg-surface overflow-y-auto border-r border-outline/20">
+      <nav class="p-4 space-y-1">
+        <a href="home.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="home" class="w-4 h-4"></i>
+          首页
+        </a>
+        <div class="pt-4 pb-2 px-3">
+          <span class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">社区</span>
+        </div>
+        <a href="community.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="message-square" class="w-4 h-4"></i>
+          社区广场
+        </a>
+        <a href="community-rhythm.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="gamepad" class="w-4 h-4"></i>
+          音游区
+        </a>
+        <a href="community-charts.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="disc" class="w-4 h-4"></i>
+          谱面讨论
+        </a>
+        <a href="community-art.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="palette" class="w-4 h-4"></i>
+          联动创作
+        </a>
+        <a href="community-events.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="calendar" class="w-4 h-4"></i>
+          活动比赛
+        </a>
+        <div class="pt-4 pb-2 px-3">
+          <span class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">个人</span>
+        </div>
+        <a href="profile.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md bg-primary/10 text-primary font-medium text-sm transition-colors" aria-current="page">
+          <i data-lucide="user" class="w-4 h-4"></i>
+          个人主页
+        </a>
+        <a href="profile-scores.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="trophy" class="w-4 h-4"></i>
+          成绩管理
+        </a>
+        <a href="leaderboard.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="bar-chart" class="w-4 h-4"></i>
+          排行榜
+        </a>
+        <a href="messages.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="mail" class="w-4 h-4"></i>
+          私信
+        </a>
+      </nav>
+    </aside>
+
+    <!-- 右侧 AI Agent 侧边栏 -->
+    <aside class="w-80 shrink-0 bg-surface overflow-y-auto border-l border-outline/20 flex flex-col">
+      <div class="p-4 border-b border-outline/20">
+        <div class="flex items-center gap-2 mb-1">
+          <i data-lucide="bot" class="text-primary w-5 h-5"></i>
+          <span class="font-semibold">AI 陪练</span>
+        </div>
+        <p class="text-xs text-on-surface-variant">你的专属音游进阶教练</p>
+      </div>
+      <div class="flex-1 p-4 space-y-4 overflow-y-auto">
+        <div class="bg-surface-container rounded-lg p-3">
+          <div class="flex items-start gap-2">
+            <i data-lucide="bot" class="text-primary w-4 h-4 mt-0.5 shrink-0"></i>
+            <div class="text-sm">
+              <p class="text-on-surface">你好！我是你的音游陪练。需要分析成绩、推荐谱面，还是制定训练计划？</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-4 border-t border-outline/20">
+        <div class="flex items-center gap-2">
+          <input type="text" placeholder="输入你的问题..." class="flex-1 bg-surface-container border-none rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30">
+          <button class="bg-primary text-on-primary p-2 rounded-md hover:opacity-90 transition-opacity">
+            <i data-lucide="send" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+  <!-- @nav:end 导航组件，不需要的页面则不要复制此段 -->
+
+    <!-- 主内容区 -->
+    <!-- @main-content:start -->
+    <main class="flex-1 min-w-0 overflow-y-auto bg-background p-6">
+      <!-- 顶部操作栏 -->
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold text-on-surface">个人主页</h1>
+        <button id="btn-edit-profile" class="bg-primary text-on-primary px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all inline-flex items-center gap-2">
+          <i data-lucide="pencil" class="w-3.5 h-3.5"></i>编辑资料
+        </button>
+      </div>
+
+      <!-- 用户信息卡片 -->
+      <div class="bg-surface rounded-lg shadow-card p-5 mb-6">
+        <div class="flex items-start gap-6">
+          <!-- 头像 -->
+          <div class="w-24 h-24 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-3xl shrink-0">
+            初
+          </div>
+          <!-- 用户基本信息 -->
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2">
+              <h2 class="text-xl font-bold text-on-surface">小初</h2>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-success/15 text-success">资深触手</span>
+            </div>
+            <p class="text-sm text-on-surface-variant mb-3">音游爱好者，擅长 Arcaea 和 Phigros，目标是全曲 PM！</p>
+            <!-- 统计数据 -->
+            <div class="flex items-center gap-8">
+              <div>
+                <p class="text-xs text-on-surface-variant mb-1">Best 成绩</p>
+                <p class="text-lg font-semibold text-primary">PM × 42</p>
+              </div>
+              <div>
+                <p class="text-xs text-on-surface-variant mb-1">游玩次数</p>
+                <p class="text-lg font-semibold text-on-surface">1,284</p>
+              </div>
+              <div>
+                <p class="text-xs text-on-surface-variant mb-1">关注</p>
+                <p class="text-lg font-semibold text-on-surface">128</p>
+              </div>
+              <div>
+                <p class="text-xs text-on-surface-variant mb-1">粉丝</p>
+                <p class="text-lg font-semibold text-on-surface">256</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 标签页 -->
+      <div class="bg-surface rounded-lg shadow-card overflow-hidden">
+        <!-- 标签页导航 -->
+        <div class="flex border-b border-outline/20">
+          <button id="tab-activity" class="px-4 py-3 text-sm font-medium text-primary border-b-2 border-primary transition-colors">
+            动态
+          </button>
+          <button id="tab-scores" class="px-4 py-3 text-sm font-medium text-on-surface-variant hover:text-on-surface transition-colors">
+            成绩
+          </button>
+          <button id="tab-favorites" class="px-4 py-3 text-sm font-medium text-on-surface-variant hover:text-on-surface transition-colors">
+            收藏
+          </button>
+        </div>
+
+        <!-- 标签页内容 -->
+        <div class="p-5">
+          <!-- 动态内容 -->
+          <div id="content-activity" class="space-y-4">
+            <!-- 动态-1 -->
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold shrink-0">
+                初
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-sm font-medium text-on-surface">小初</span>
+                  <span class="text-xs text-on-surface-variant">2小时前</span>
+                </div>
+                <p class="text-sm text-on-surface mb-2">终于把这首 PM 了！练习了整整一周，太不容易了 🎉</p>
+                <div class="bg-surface-container rounded-md p-3">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-sm font-medium text-on-surface">Tempestissimo</p>
+                      <p class="text-xs text-on-surface-variant">Arcaea · BYD · 11</p>
+                    </div>
+                    <div class="text-right">
+                      <p class="text-lg font-bold text-success">PM</p>
+                      <p class="text-xs text-on-surface-variant">10,000,000</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 动态-2 -->
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold shrink-0">
+                初
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-sm font-medium text-on-surface">小初</span>
+                  <span class="text-xs text-on-surface-variant">昨天</span>
+                </div>
+                <p class="text-sm text-on-surface mb-2">今天参加了社区比赛，虽然只拿了第三名，但认识了很多大佬，很开心！</p>
+              </div>
+            </div>
+
+            <!-- 动态-3 -->
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold shrink-0">
+                初
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-sm font-medium text-on-surface">小初</span>
+                  <span class="text-xs text-on-surface-variant">3天前</span>
+                </div>
+                <p class="text-sm text-on-surface mb-2">新谱面好好玩！推荐给大家 🎵</p>
+                <div class="bg-surface-container rounded-md p-3">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-sm font-medium text-on-surface">Igallta</p>
+                      <p class="text-xs text-on-surface-variant">Phigros · IN · 15</p>
+                    </div>
+                    <div class="text-right">
+                      <p class="text-lg font-bold text-primary">EX</p>
+                      <p class="text-xs text-on-surface-variant">992,345</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 成绩内容 -->
+          <div id="content-scores" class="space-y-4 hidden">
+            <!-- 成绩-1 -->
+            <div class="bg-surface-container rounded-md p-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                  <div>
+                    <p class="text-sm font-medium text-on-surface">Tempestissimo</p>
+                    <p class="text-xs text-on-surface-variant">Arcaea · BYD · 11</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="text-lg font-bold text-success">PM</p>
+                  <p class="text-xs text-on-surface-variant">2024-01-15</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 成绩-2 -->
+            <div class="bg-surface-container rounded-md p-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                  <div>
+                    <p class="text-sm font-medium text-on-surface">Igallta</p>
+                    <p class="text-xs text-on-surface-variant">Phigros · IN · 15</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="text-lg font-bold text-primary">EX</p>
+                  <p class="text-xs text-on-surface-variant">2024-01-12</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 成绩-3 -->
+            <div class="bg-surface-container rounded-md p-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                  <div>
+                    <p class="text-sm font-medium text-on-surface">SAIKYO STRONGER</p>
+                    <p class="text-xs text-on-surface-variant">舞萌 · MASTER · 13+</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="text-lg font-bold text-warning">AA</p>
+                  <p class="text-xs text-on-surface-variant">2024-01-10</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 成绩-4 -->
+            <div class="bg-surface-container rounded-md p-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                  <div>
+                    <p class="text-sm font-medium text-on-surface">Grievous Lady</p>
+                    <p class="text-xs text-on-surface-variant">Arcaea · FTR · 10</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="text-lg font-bold text-success">PM</p>
+                  <p class="text-xs text-on-surface-variant">2024-01-08</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 收藏内容 -->
+          <div id="content-favorites" class="space-y-4 hidden">
+            <!-- 收藏-1 -->
+            <div class="bg-surface-container rounded-md p-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                  <div>
+                    <p class="text-sm font-medium text-on-surface">谱面解析：如何打好交叉手</p>
+                    <p class="text-xs text-on-surface-variant">谱面讨论 · 作者：音游达人</p>
+                  </div>
+                </div>
+                <button class="text-primary text-sm font-medium hover:underline">查看</button>
+              </div>
+            </div>
+
+            <!-- 收藏-2 -->
+            <div class="bg-surface-container rounded-md p-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                  <div>
+                    <p class="text-sm font-medium text-on-surface">2024年冬季赛报名开启</p>
+                    <p class="text-xs text-on-surface-variant">活动比赛 · 官方</p>
+                  </div>
+                </div>
+                <button class="text-primary text-sm font-medium hover:underline">查看</button>
+              </div>
+            </div>
+
+            <!-- 收藏-3 -->
+            <div class="bg-surface-container rounded-md p-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                  <div>
+                    <p class="text-sm font-medium text-on-surface">新手入门：Phigros 基础操作指南</p>
+                    <p class="text-xs text-on-surface-variant">社区广场 · 作者：老司机</p>
+                  </div>
+                </div>
+                <button class="text-primary text-sm font-medium hover:underline">查看</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- @main-content:end -->
+  </div>
+
+  <script>
+    $(function(){
+      // 标签页切换
+      $('#tab-activity').on('click', function() {
+        // 切换标签页激活态
+        $('#tab-activity').addClass('text-primary border-b-2 border-primary').removeClass('text-on-surface-variant');
+        $('#tab-scores, #tab-favorites').removeClass('text-primary border-b-2 border-primary').addClass('text-on-surface-variant');
+        // 切换内容显示
+        $('#content-activity').removeClass('hidden');
+        $('#content-scores, #content-favorites').addClass('hidden');
+      });
+
+      $('#tab-scores').on('click', function() {
+        // 切换标签页激活态
+        $('#tab-scores').addClass('text-primary border-b-2 border-primary').removeClass('text-on-surface-variant');
+        $('#tab-activity, #tab-favorites').removeClass('text-primary border-b-2 border-primary').addClass('text-on-surface-variant');
+        // 切换内容显示
+        $('#content-scores').removeClass('hidden');
+        $('#content-activity, #content-favorites').addClass('hidden');
+      });
+
+      $('#tab-favorites').on('click', function() {
+        // 切换标签页激活态
+        $('#tab-favorites').addClass('text-primary border-b-2 border-primary').removeClass('text-on-surface-variant');
+        $('#tab-activity, #tab-scores').removeClass('text-primary border-b-2 border-primary').addClass('text-on-surface-variant');
+        // 切换内容显示
+        $('#content-favorites').removeClass('hidden');
+        $('#content-activity, #content-scores').addClass('hidden');
+      });
+
+      // 编辑资料按钮
+      $('#btn-edit-profile').on('click', function() {
+        console.log('编辑资料按钮被点击，后续应实现：');
+        console.log('1. 打开编辑资料模态框');
+        console.log('2. 表单包含：头像上传、用户名、简介、游戏偏好等字段');
+        console.log('3. 保存后更新页面上的用户信息');
+      });
+    });
+    lucide.createIcons();
+  </script>
+</body>
+
+</html>

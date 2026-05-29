@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- 字体（按需，系统字体时省略；只能用 Google 字体，CSS 地址前缀：https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google） -->
+  <!-- <link href="https://lf-code-agent.coze.cn/obj/x-ai-cn/fonts/google/google-all-fonts.css" rel="stylesheet"/> -->
+
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/tailwindcss/tailwindcss-browser-4.2.4.min.js"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      /* === 品牌色 - 赛博音游风 === */
+      --color-primary:              #00f0ff;
+      --color-primary-container:    #00f0ff20;
+      --color-on-primary:           #0a0a0f;
+      /* === 背景 / 表面 === */
+      --color-background:                 #0a0a0f;
+      --color-surface-container-lowest:   #0d0d14;
+      --color-surface:                    #12121a;
+      --color-surface-container:          #1a1a2e;
+      --color-surface-container-high:     #22223a;
+      --color-surface-container-highest:  #2a2a4a;
+      /* === 文字 === */
+      --color-on-surface:           #e0e0e0;
+      --color-on-surface-variant:   #a0a0b0;
+      /* === 功能色 === */
+      --color-success:  #00ff88;
+      --color-error:    #ff4444;
+      --color-warning:  #ffcc00;
+      /* === 边框 === */
+      --color-outline:          #1e1e30;
+      --color-outline-variant:  #2a2a4a;
+      /* === 圆角 === */
+      --radius-sm:   0.375rem;
+      --radius-md:   0.5rem;
+      --radius-lg:   0.75rem;
+      --radius-xl:   1rem;
+      --radius-2xl:  1.5rem;
+      --radius-full: 9999px;
+      /* === 阴影 - 霓虹发光 === */
+      --shadow-card:   0 2px 8px rgba(0,240,255,0.1);
+      --shadow-float:  0 10px 25px rgba(0,240,255,0.15);
+      --shadow-dialog: 0 25px 50px rgba(0,240,255,0.2);
+      /* === 字体 === */
+      --font-sans: system-ui, -apple-system, sans-serif;
+    }
+  </style>
+
+  <!-- 图片兜底 -->
+  <script>
+    document.addEventListener('error', function (e) {
+      const img = e.target;
+      if (img.tagName !== 'IMG' || img.dataset.fallback) return;
+      img.dataset.fallback = '1';
+      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const cat = img.getAttribute('data-category') || '其他';
+      const alt = img.getAttribute('alt') || '';
+      const label = esc(alt.length > 8 ? alt.slice(0, 8) + '…' : alt);
+      const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
+      const icon = icons[cat] || '🖼';
+      const w = img.width || 400, h = img.height || 300;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%23f3f4f6"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%239ca3af" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      img.src = 'data:image/svg+xml,' + svg;
+    }, true);
+  </script>
+</head>
+
+<body class="bg-background text-on-surface font-sans min-h-screen">
+
+  <!-- @nav:start 导航组件，不需要的页面则不要复制此段（从 @nav:start 到 @nav:end） -->
+  <!-- 顶部导航 -->
+  <header class="bg-surface sticky top-0 z-40 h-16 flex items-center justify-between px-6 border-b border-outline/20">
+    <div class="flex items-center gap-3">
+      <i data-lucide="music" class="text-primary w-6 h-6"></i>
+      <span class="font-bold text-xl text-primary">Rhythm Community</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <button class="p-2 rounded-md hover:bg-surface-container transition-colors">
+        <i data-lucide="bell" class="w-5 h-5 text-on-surface-variant"></i>
+      </button>
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold">
+          初
+        </div>
+        <span class="text-sm font-medium">小初</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex" style="height: calc(100vh - 4rem)">
+    <!-- 左侧侧边栏 -->
+    <aside class="w-64 shrink-0 bg-surface overflow-y-auto border-r border-outline/20">
+      <nav class="p-4 space-y-1">
+        <a href="home.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="home" class="w-4 h-4"></i>
+          首页
+        </a>
+        <div class="pt-4 pb-2 px-3">
+          <span class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">社区</span>
+        </div>
+        <a href="community.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="message-square" class="w-4 h-4"></i>
+          社区广场
+        </a>
+        <a href="community-rhythm.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="gamepad" class="w-4 h-4"></i>
+          音游区
+        </a>
+        <a href="community-charts.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="disc" class="w-4 h-4"></i>
+          谱面讨论
+        </a>
+        <a href="community-art.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="palette" class="w-4 h-4"></i>
+          联动创作
+        </a>
+        <a href="community-events.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md bg-primary/10 text-primary font-medium text-sm" aria-current="page">
+          <i data-lucide="calendar" class="w-4 h-4"></i>
+          活动比赛
+        </a>
+        <div class="pt-4 pb-2 px-3">
+          <span class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">个人</span>
+        </div>
+        <a href="profile.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="user" class="w-4 h-4"></i>
+          个人主页
+        </a>
+        <a href="profile-scores.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="trophy" class="w-4 h-4"></i>
+          成绩管理
+        </a>
+        <a href="leaderboard.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="bar-chart" class="w-4 h-4"></i>
+          排行榜
+        </a>
+        <a href="messages.html" class="flex items-center gap-3 px-3 py-2.5 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-colors">
+          <i data-lucide="mail" class="w-4 h-4"></i>
+          私信
+        </a>
+      </nav>
+    </aside>
+
+    <!-- 右侧 AI Agent 侧边栏 -->
+    <aside class="w-80 shrink-0 bg-surface overflow-y-auto border-l border-outline/20 flex flex-col">
+      <div class="p-4 border-b border-outline/20">
+        <div class="flex items-center gap-2 mb-1">
+          <i data-lucide="bot" class="text-primary w-5 h-5"></i>
+          <span class="font-semibold">AI 陪练</span>
+        </div>
+        <p class="text-xs text-on-surface-variant">你的专属音游进阶教练</p>
+      </div>
+      <div class="flex-1 p-4 space-y-4 overflow-y-auto">
+        <div class="bg-surface-container rounded-lg p-3">
+          <div class="flex items-start gap-2">
+            <i data-lucide="bot" class="text-primary w-4 h-4 mt-0.5 shrink-0"></i>
+            <div class="text-sm">
+              <p class="text-on-surface">你好！我是你的音游陪练。需要分析成绩、推荐谱面，还是制定训练计划？</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-4 border-t border-outline/20">
+        <div class="flex items-center gap-2">
+          <input type="text" placeholder="输入你的问题..." class="flex-1 bg-surface-container border-none rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30">
+          <button class="bg-primary text-on-primary p-2 rounded-md hover:opacity-90 transition-opacity">
+            <i data-lucide="send" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+  <!-- @nav:end 导航组件，不需要的页面则不要复制此段 -->
+
+    <!-- 主内容区 -->
+    <!-- @main-content:start -->
+    <main class="flex-1 min-w-0 overflow-y-auto bg-background p-6">
+      <!-- 页面标题和筛选 -->
+      <div class="mb-8">
+        <h1 class="text-2xl font-bold text-on-surface mb-2">活动比赛</h1>
+        <p class="text-sm text-on-surface-variant">参与社区活动，展示你的音游实力</p>
+      </div>
+
+      <!-- 活动筛选标签 -->
+      <div class="flex items-center gap-2 mb-6">
+        <button id="tab-all" class="px-4 py-2 rounded-md text-sm font-medium bg-primary text-on-primary">全部</button>
+        <button id="tab-ongoing" class="px-4 py-2 rounded-md text-sm font-medium bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors">进行中</button>
+        <button id="tab-upcoming" class="px-4 py-2 rounded-md text-sm font-medium bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors">即将开始</button>
+        <button id="tab-history" class="px-4 py-2 rounded-md text-sm font-medium bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors">历史活动</button>
+      </div>
+
+      <!-- 活动时间轴 -->
+      <div class="space-y-6">
+        <!-- 进行中的活动1 -->
+        <div id="event-1" class="event-card bg-surface rounded-lg shadow-card p-5">
+          <div class="flex items-start gap-4">
+            <!-- 时间轴节点 -->
+            <div class="flex flex-col items-center">
+              <div class="w-3 h-3 rounded-full bg-success"></div>
+              <div class="w-0.5 flex-1 bg-success/30 mt-2"></div>
+            </div>
+            <!-- 活动内容 -->
+            <div class="flex-1">
+              <div class="flex items-center gap-3 mb-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-success/15 text-success">进行中</span>
+                <span class="text-xs text-on-surface-variant">2026-05-20 至 2026-06-20</span>
+              </div>
+              <h3 class="text-base font-semibold text-on-surface mb-2">夏季音游挑战赛 - Phigros专场</h3>
+              <p class="text-sm text-on-surface-variant mb-4">挑战指定曲目，追求最高分数！每周更新挑战曲目，累计积分赢取限定徽章。</p>
+              <div class="flex items-center gap-4 mb-4">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="users" class="w-4 h-4 text-on-surface-variant"></i>
+                  <span class="text-sm text-on-surface-variant">1,234人参与</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="trophy" class="w-4 h-4 text-on-surface-variant"></i>
+                  <span class="text-sm text-on-surface-variant">限定徽章×3</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <button id="btn-join-event-1" class="bg-primary text-on-primary px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all">立即参与</button>
+                <button id="btn-view-detail-1" class="text-primary text-sm font-medium hover:underline">查看详情</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 进行中的活动2 -->
+        <div id="event-2" class="event-card bg-surface rounded-lg shadow-card p-5">
+          <div class="flex items-start gap-4">
+            <!-- 时间轴节点 -->
+            <div class="flex flex-col items-center">
+              <div class="w-3 h-3 rounded-full bg-success"></div>
+              <div class="w-0.5 flex-1 bg-success/30 mt-2"></div>
+            </div>
+            <!-- 活动内容 -->
+            <div class="flex-1">
+              <div class="flex items-center gap-3 mb-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-success/15 text-success">进行中</span>
+                <span class="text-xs text-on-surface-variant">2026-05-15 至 2026-06-15</span>
+              </div>
+              <h3 class="text-base font-semibold text-on-surface mb-2">Arcaea 爬塔挑战 - 双星篇</h3>
+              <p class="text-sm text-on-surface-variant mb-4">挑战双星难度曲目，突破自我极限！完成全部挑战可获得"双星征服者"称号。</p>
+              <div class="flex items-center gap-4 mb-4">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="users" class="w-4 h-4 text-on-surface-variant"></i>
+                  <span class="text-sm text-on-surface-variant">856人参与</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="award" class="w-4 h-4 text-on-surface-variant"></i>
+                  <span class="text-sm text-on-surface-variant">限定称号</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <button id="btn-join-event-2" class="bg-primary text-on-primary px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all">立即参与</button>
+                <button id="btn-view-detail-2" class="text-primary text-sm font-medium hover:underline">查看详情</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 即将开始的活动1 -->
+        <div id="event-3" class="event-card bg-surface rounded-lg shadow-card p-5">
+          <div class="flex items-start gap-4">
+            <!-- 时间轴节点 -->
+            <div class="flex flex-col items-center">
+              <div class="w-3 h-3 rounded-full bg-warning"></div>
+              <div class="w-0.5 flex-1 bg-warning/30 mt-2"></div>
+            </div>
+            <!-- 活动内容 -->
+            <div class="flex-1">
+              <div class="flex items-center gap-3 mb-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-warning/15 text-warning">即将开始</span>
+                <span class="text-xs text-on-surface-variant">2026-06-25 至 2026-07-25</span>
+              </div>
+              <h3 class="text-base font-semibold text-on-surface mb-2">舞萌DX 全国联赛 - 夏季赛</h3>
+              <p class="text-sm text-on-surface-variant mb-4">全国性舞萌DX竞技大赛，分为预选赛、复赛、决赛三个阶段，胜者将获得丰厚奖励！</p>
+              <div class="flex items-center gap-4 mb-4">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="users" class="w-4 h-4 text-on-surface-variant"></i>
+                  <span class="text-sm text-on-surface-variant">预约中 567人</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="gift" class="w-4 h-4 text-on-surface-variant"></i>
+                  <span class="text-sm text-on-surface-variant">丰厚奖品</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <button id="btn-reserve-event-3" class="bg-primary text-on-primary px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all">预约活动</button>
+                <button id="btn-view-detail-3" class="text-primary text-sm font-medium hover:underline">查看详情</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 历史活动1 -->
+        <div id="event-4" class="event-card bg-surface rounded-lg shadow-card p-5 opacity-75">
+          <div class="flex items-start gap-4">
+            <!-- 时间轴节点 -->
+            <div class="flex flex-col items-center">
+              <div class="w-3 h-3 rounded-full bg-outline-variant"></div>
+              <div class="w-0.5 flex-1 bg-outline-variant/30 mt-2"></div>
+            </div>
+            <!-- 活动内容 -->
+            <div class="flex-1">
+              <div class="flex items-center gap-3 mb-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-outline-variant/15 text-on-surface-variant">已结束</span>
+                <span class="text-xs text-on-surface-variant">2026-04-01 至 2026-05-01</span>
+              </div>
+              <h3 class="text-base font-semibold text-on-surface mb-2">春季创作大赛 - 谱面设计</h3>
+              <p class="text-sm text-on-surface-variant mb-4">展示你的谱面设计才华！社区投票评选最佳谱面，获胜者将获得"谱面大师"称号。</p>
+              <div class="flex items-center gap-4 mb-4">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="users" class="w-4 h-4 text-on-surface-variant"></i>
+                  <span class="text-sm text-on-surface-variant">2,345人参与</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-on-surface-variant"></i>
+                  <span class="text-sm text-on-surface-variant">已圆满结束</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <button id="btn-view-results-4" class="bg-surface-container text-on-surface px-4 py-2 rounded-md text-sm font-medium hover:bg-surface-container-high transition-colors">查看结果</button>
+                <button id="btn-view-detail-4" class="text-primary text-sm font-medium hover:underline">查看详情</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 历史活动2 -->
+        <div id="event-5" class="event-card bg-surface rounded-lg shadow-card p-5 opacity-75">
+          <div class="flex items-start gap-4">
+            <!-- 时间轴节点 -->
+            <div class="flex flex-col items-center">
+              <div class="w-3 h-3 rounded-full bg-outline-variant"></div>
+              <div class="w-0.5 flex-1 bg-outline-variant/30 mt-2"></div>
+            </div>
+            <!-- 活动内容 -->
+            <div class="flex-1">
+              <div class="flex items-center gap-3 mb-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-outline-variant/15 text-on-surface-variant">已结束</span>
+                <span class="text-xs text-on-surface-variant">2026-03-10 至 2026-04-10</span>
+              </div>
+              <h3 class="text-base font-semibold text-on-surface mb-2">愚人节特别活动 - 反向挑战</h3>
+              <p class="text-sm text-on-surface-variant mb-4">反向挑战！追求最低分数但不能Miss太多，考验你的精准控制力。</p>
+              <div class="flex items-center gap-4 mb-4">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="users" class="w-4 h-4 text-on-surface-variant"></i>
+                  <span class="text-sm text-on-surface-variant">1,890人参与</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-on-surface-variant"></i>
+                  <span class="text-sm text-on-surface-variant">已圆满结束</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <button id="btn-view-results-5" class="bg-surface-container text-on-surface px-4 py-2 rounded-md text-sm font-medium hover:bg-surface-container-high transition-colors">查看结果</button>
+                <button id="btn-view-detail-5" class="text-primary text-sm font-medium hover:underline">查看详情</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- @main-content:end -->
+  </div>
+
+  <script>
+    lucide.createIcons();
+    
+    $(function() {
+      // 活动筛选标签切换
+      $('#tab-all').on('click', function() {
+        $('.event-card').show();
+        updateTabStyles('all');
+      });
+      
+      $('#tab-ongoing').on('click', function() {
+        $('.event-card').hide();
+        $('#event-1, #event-2').show();
+        updateTabStyles('ongoing');
+      });
+      
+      $('#tab-upcoming').on('click', function() {
+        $('.event-card').hide();
+        $('#event-3').show();
+        updateTabStyles('upcoming');
+      });
+      
+      $('#tab-history').on('click', function() {
+        $('.event-card').hide();
+        $('#event-4, #event-5').show();
+        updateTabStyles('history');
+      });
+      
+      // 更新标签样式
+      function updateTabStyles(activeTab) {
+        const tabs = ['all', 'ongoing', 'upcoming', 'history'];
+        tabs.forEach(tab => {
+          const $tab = $('#tab-' + tab);
+          if (tab === activeTab) {
+            $tab.removeClass('bg-surface-container text-on-surface-variant').addClass('bg-primary text-on-primary');
+          } else {
+            $tab.removeClass('bg-primary text-on-primary').addClass('bg-surface-container text-on-surface-variant');
+          }
+        });
+      }
+      
+      // 参与活动按钮
+      $('#btn-join-event-1, #btn-join-event-2').on('click', function() {
+        console.log('参与活动:', $(this).attr('id'));
+        // 这里应该跳转到活动详情页或打开参与弹窗
+      });
+      
+      // 预约活动按钮
+      $('#btn-reserve-event-3').on('click', function() {
+        console.log('预约活动:', $(this).attr('id'));
+        // 这里应该显示预约成功提示或打开预约表单
+      });
+      
+      // 查看详情按钮
+      $('[id^="btn-view-detail-"]').on('click', function() {
+        console.log('查看活动详情:', $(this).attr('id'));
+        // 这里应该跳转到活动详情页，如 event-detail.html?id=1
+      });
+      
+      // 查看结果按钮
+      $('[id^="btn-view-results-"]').on('click', function() {
+        console.log('查看活动结果:', $(this).attr('id'));
+        // 这里应该跳转到活动结果页
+      });
+    });
+  </script>
+</body>
+
+</html>
