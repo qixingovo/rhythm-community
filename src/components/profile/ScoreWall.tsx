@@ -105,12 +105,26 @@ export function ScoreWall({ scores, rating: officialRating }: { scores: Score[];
     <div className="space-y-4">
       <div className="bg-card rounded-xl border border-border p-4">
         <div className="flex items-center justify-between"><h3 className="text-sm font-semibold text-foreground">B50 Rating</h3><span className="text-xl font-bold text-primary">{officialRating ?? totalRa}</span></div>
+        <div className="flex gap-4 text-xs mt-2">
+          <div className="flex-1 bg-muted rounded-lg p-2"><span className="text-muted-foreground">b35</span> <span className="font-bold">{stdTotal}</span></div>
+          <div className="flex-1 bg-muted rounded-lg p-2"><span className="text-muted-foreground">b15</span> <span className="font-bold">{dxTotal}</span></div>
+        </div>
         <div className="text-xs text-muted-foreground mt-1">{sorted.length} 首</div>
       </div>
-      <div>
-        <div className="flex items-center justify-between mb-2"><h4 className="text-sm font-semibold text-foreground">Best 50</h4><span className="text-xs text-muted-foreground">{sorted.length} 首</span></div>
-        {sorted.map((s, i) => <ScoreRow key={s.id} s={s} idx={i} />)}
-      </div>
+
+      {standardScores.filter(s => getRa(s) > 0).length > 0 && (
+        <div>
+          <div className="flex items-center justify-between mb-2 mt-4"><h4 className="text-sm font-semibold text-foreground">b35 旧版本</h4><span className="text-xs text-muted-foreground">{standardScores.filter(s => getRa(s) > 0).length} 首</span></div>
+          {standardScores.filter(s => getRa(s) > 0).sort((a,b) => getRa(b) - getRa(a)).slice(0, 35).map((s, i) => <ScoreRow key={s.id} s={s} idx={i} />)}
+        </div>
+      )}
+
+      {dxScores.filter(s => getRa(s) > 0).length > 0 && (
+        <div>
+          <div className="flex items-center justify-between mb-2 mt-4"><h4 className="text-sm font-semibold text-foreground">b15 新版本</h4><span className="text-xs text-muted-foreground">{dxScores.filter(s => getRa(s) > 0).length} 首</span></div>
+          {dxScores.filter(s => getRa(s) > 0).sort((a,b) => getRa(b) - getRa(a)).slice(0, 15).map((s, i) => <ScoreRow key={s.id} s={s} idx={i} />)}
+        </div>
+      )}
     </div>
   )
 }
