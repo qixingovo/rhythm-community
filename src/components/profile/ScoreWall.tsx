@@ -55,8 +55,8 @@ export function ScoreWall({ scores }: { scores: Score[] }) {
 
   if (scores.length === 0) return <div className="p-12 text-center text-muted-foreground">暂无成绩</div>
 
-  const sorted = [...scores].sort((a, b) => b.score - a.score)
   const getRa = (s: Score) => (s.agentAnalysis as any)?.ra || 0
+  const sorted = [...scores].sort((a, b) => getRa(b) - getRa(a))
   const standardScores = sorted.filter(s => s.chartType?.toUpperCase() !== "DX")
   const dxScores = sorted.filter(s => s.chartType?.toUpperCase() === "DX")
   const stdTotal = standardScores.sort((a,b) => getRa(b) - getRa(a)).slice(0, 35).reduce((s,r) => s + getRa(r), 0)
