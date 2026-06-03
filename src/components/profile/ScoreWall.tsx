@@ -56,9 +56,12 @@ export function ScoreWall({ scores }: { scores: Score[] }) {
   if (scores.length === 0) return <div className="p-12 text-center text-muted-foreground">暂无成绩</div>
 
   const parseAnalysis = (s: Score) => {
-    if (!s.agentAnalysis) return { ra: 0, ds: 0, songId: null }
-    if (typeof s.agentAnalysis === "string") return JSON.parse(s.agentAnalysis)
-    return s.agentAnalysis
+    try {
+      if (!s.agentAnalysis) return { ra: 0, ds: 0, songId: null }
+      if (typeof s.agentAnalysis === "string") return JSON.parse(s.agentAnalysis)
+      if (typeof s.agentAnalysis === "object") return s.agentAnalysis
+      return { ra: 0, ds: 0, songId: null }
+    } catch { return { ra: 0, ds: 0, songId: null } }
   }
   const getRa = (s: Score) => parseAnalysis(s).ra || 0
   const sorted = [...scores].sort((a, b) => getRa(b) - getRa(a))

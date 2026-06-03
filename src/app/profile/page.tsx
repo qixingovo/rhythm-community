@@ -41,7 +41,7 @@ export default function Profile() {
       try {
         const [userRes, scoresRes] = await Promise.all([
           fetch("/api/auth/me"),
-          fetch("/api/scores?limit=100"),
+          fetch("/api/scores?limit=1000"),
         ])
         if (userRes.ok) {
           const d = await userRes.json()
