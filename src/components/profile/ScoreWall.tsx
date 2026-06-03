@@ -46,7 +46,7 @@ const CoverImg = ({ songId, songTitle }: { songId?: string; songTitle: string })
   return <img src={`https://www.diving-fish.com/covers/${songId}.png`} alt={songTitle} className="w-10 h-10 rounded-md object-cover shrink-0 border border-border" onError={() => setFailed(true)} />
 }
 
-export function ScoreWall({ scores }: { scores: Score[] }) {
+export function ScoreWall({ scores, rating: officialRating }: { scores: Score[]; rating?: number }) {
   const [songMap, setSongMap] = useState<SongEntry[]>([])
 
   useEffect(() => {
@@ -104,7 +104,7 @@ export function ScoreWall({ scores }: { scores: Score[] }) {
   return (
     <div className="space-y-4">
       <div className="bg-card rounded-xl border border-border p-4">
-        <div className="flex items-center justify-between"><h3 className="text-sm font-semibold text-foreground">B50 Rating</h3><span className="text-xl font-bold text-primary">{totalRa}</span></div>
+        <div className="flex items-center justify-between"><h3 className="text-sm font-semibold text-foreground">B50 Rating</h3><span className="text-xl font-bold text-primary">{officialRating ?? totalRa}</span></div>
         <div className="text-xs text-muted-foreground mt-1">{sorted.length} 首</div>
       </div>
       <div>

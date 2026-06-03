@@ -146,7 +146,7 @@ export default function Profile() {
               <div className="text-center py-12 text-muted-foreground">暂无成绩</div>
             ) : (
               <>
-                <ScoreWall scores={scores} />
+                <ScoreWall scores={scores} rating={user?.bio?.match(/\d+/)?.[0] ? parseInt(user.bio.match(/\d+/)![0]) : undefined} />
                 <div className="mt-6">
                   <h3 className="text-sm font-semibold text-foreground mb-3">b50 图表</h3>
                   <div className="bg-card rounded-xl border border-border p-4">
