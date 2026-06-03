@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     const [scores, total] = await Promise.all([
       prisma.score.findMany({
         where,
-        orderBy: { createdAt: "desc" },
+        orderBy: { score: "desc" },
         take: limit,
         skip: offset,
         include: {
