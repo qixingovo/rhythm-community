@@ -55,7 +55,12 @@ export function ScoreWall({ scores }: { scores: Score[] }) {
 
   if (scores.length === 0) return <div className="p-12 text-center text-muted-foreground">暂无成绩</div>
 
-  const getRa = (s: Score) => (s.agentAnalysis as any)?.ra || 0
+  const parseAnalysis = (s: Score) => {
+    if (!s.agentAnalysis) return { ra: 0, ds: 0, songId: null }
+    if (typeof s.agentAnalysis === "string") return JSON.parse(s.agentAnalysis)
+    return s.agentAnalysis
+  }
+  const getRa = (s: Score) => parseAnalysis(s).ra || 0
   const sorted = [...scores].sort((a, b) => getRa(b) - getRa(a))
   const standardScores = sorted.filter(s => s.chartType?.toUpperCase() !== "DX")
   const dxScores = sorted.filter(s => s.chartType?.toUpperCase() === "DX")
@@ -65,11 +70,12 @@ export function ScoreWall({ scores }: { scores: Score[] }) {
 
   const ScoreRow = ({ s, idx }: { s: Score; idx: number }) => {
     const match = matchSongEntry(songMap, s.songTitle, s.chartLevel)
+    const meta = parseAnalysis(s)
     const style = getRatingStyle(s.grade)
     const ach = getAchievement(s)
-    const ra = (s.agentAnalysis as any)?.ra || (match?.constant ? calcDxRating(match.constant, ach) : calcDxRating(getChartConstant(s.chartLevel), ach))
+    const ra = meta.ra || (match?.constant ? calcDxRating(match.constant, ach) : calcDxRating(getChartConstant(s.chartLevel), ach))
     const diffStyle = getDiffColor(s.chartLevel)
-    const songId = (s.agentAnalysis as any)?.songId || match?.songId
+    const songId = meta.songId || match?.songId
 
     return (
       <div className="grid grid-cols-12 gap-2 px-3 py-2.5 items-center hover:bg-muted/30 rounded-lg transition-colors border-b border-border/30">
