@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { MainLayout } from "@/components/MainLayout"
 import { ScoreWall } from "@/components/profile/ScoreWall"
 import { B50Chart } from "@/components/profile/B50Chart"
-import { Trophy, Edit, X } from "lucide-react"
+import { Trophy, Edit, X, RefreshCw } from "lucide-react"
 import Link from "next/link"
 
 interface UserData {
@@ -34,6 +34,10 @@ export default function Profile() {
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(false)
   const [editBio, setEditBio] = useState("")
+  const [syncing, setSyncing] = useState(false)
+  const [syncModal, setSyncModal] = useState(false)
+  const [maimaiUser, setMaimaiUser] = useState("")
+  const [syncMsg, setSyncMsg] = useState("")
   const [activeTab, setActiveTab] = useState<"scores" | "posts">("scores")
 
   useEffect(() => {
@@ -100,6 +104,13 @@ export default function Profile() {
               </div>
               <div className="flex gap-2">
                 <button
+                  onClick={() => { setSyncModal(true); setMaimaiUser("") }}
+                  className="flex items-center gap-1 px-3 py-2 rounded-lg border border-border text-sm hover:bg-muted transition-colors"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  更新成绩
+                </button>
+                <button
                   onClick={() => { setEditing(true); setEditBio(user.bio || "") }}
                   className="flex items-center gap-1 px-3 py-2 rounded-lg border border-border text-sm hover:bg-muted transition-colors"
                 >
@@ -158,6 +169,40 @@ export default function Profile() {
           </div>
         )}
       </div>
+
+      {syncModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setSyncModal(false)}>
+          <div className="bg-card rounded-2xl p-6 w-full max-w-md border border-border shadow-xl" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold">更新成绩数据</h2>
+              <button onClick={() => setSyncModal(false)}><X className="w-5 h-5 text-muted-foreground" /></button>
+            </div>
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">输入你的水鱼(diving-fish)用户名，将从官方查分器同步最新成绩数据。</p>
+              <input value={maimaiUser} onChange={e => setMaimaiUser(e.target.value)} placeholder="水鱼用户名" className="w-full bg-muted border border-border rounded-xl px-4 py-3 text-sm" />
+              {syncMsg && <div className={`text-sm p-3 rounded-lg ${syncMsg.includes("失败") || syncMsg.includes("错误") ? "bg-red-50 text-red-600" : "bg-green-50 text-green-600"}`}>{syncMsg}</div>}
+              <button
+                onClick={async () => {
+                  if (!maimaiUser.trim()) return
+                  setSyncing(true)
+                  setSyncMsg("")
+                  try {
+                    const res = await fetch("/api/maimai/sync", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: maimaiUser.trim() }) })
+                    const d = await res.json()
+                    if (res.ok) { setSyncMsg(`同步成功！${d.count} 条成绩，Rating ${d.rating}`); setTimeout(() => { setSyncModal(false); window.location.reload() }, 1500) }
+                    else setSyncMsg(d.error || "同步失败")
+                  } catch { setSyncMsg("网络错误") }
+                  finally { setSyncing(false) }
+                }}
+                disabled={syncing || !maimaiUser.trim()}
+                className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-medium hover:opacity-90 disabled:opacity-50"
+              >
+                {syncing ? "同步中..." : "开始同步"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {editing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setEditing(false)}>
