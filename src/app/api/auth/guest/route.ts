@@ -17,6 +17,6 @@ export async function GET() {
     return res
   } catch (e) {
     console.error("Guest login error:", String(e))
-    return NextResponse.json({ error: "游客登录失败" }, { status: 500 })
+    return NextResponse.json({ error: "游客登录失败", detail: String(e) }, { status: 500 })
   }
 }

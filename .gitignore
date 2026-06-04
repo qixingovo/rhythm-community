@@ -163,3 +163,5 @@ Desktop.ini
 .env
 .next/
 node_modules/
+
+.vercel
