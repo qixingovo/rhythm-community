@@ -25,6 +25,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, user: { id: user.id, username: user.username, email: user.email, avatar: user.avatar, bio: user.bio, createdAt: user.createdAt } })
   } catch (error) {
     console.error("Login error:", error)
-    return NextResponse.json({ error: "登录失败", detail: String(error) }, { status: 500 })
+    return NextResponse.json({ error: "登录失败" }, { status: 500 })
   }
 }
